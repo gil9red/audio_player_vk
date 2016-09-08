@@ -331,7 +331,9 @@ class AudioPlayerPage(QWidget):
             self.thread.start()
 
     def play(self):
-        self.playlist.setCurrentIndex(self.audio_list_widget.currentRow())
+        if self.playlist.currentIndex() != self.audio_list_widget.currentRow():
+            self.playlist.setCurrentIndex(self.audio_list_widget.currentRow())
+
         self.player.play()
 
     def eventFilter(self, obj, event):
