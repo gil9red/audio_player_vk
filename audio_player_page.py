@@ -114,7 +114,7 @@ class PlayerControls(QWidget):
         # TODO: с этим условием при кликах на тело слайдера, ползунок слайдера сдвинется
         # но медиа не будет перемотано
         if not self.player_slider.isSliderDown():
-            self.player_slider.setValue(pos / 1000)
+            self.player_slider.setValue(pos // 1000)
 
         self._update_duration_info()
 
