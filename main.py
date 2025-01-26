@@ -51,7 +51,7 @@ class MainWindow(QMainWindow):
 
         self.setCentralWidget(self.stacked_widget)
 
-    def update_title(self, audio_title=""):
+    def update_title(self, audio_title: str = ""):
         self.setWindowTitle(TITLE + ". " + audio_title)
 
     def go_audio_player_page(self):

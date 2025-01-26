@@ -19,7 +19,7 @@ from PyQt5.QtWidgets import (
     QListWidgetItem,
     QProgressBar,
 )
-from PyQt5.QtGui import qFuzzyCompare, QKeyEvent
+from PyQt5.QtGui import QKeyEvent
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent, QMediaPlaylist
 from PyQt5.QtCore import pyqtSignal, Qt, QThread, QUrl
 
@@ -37,7 +37,7 @@ class PlayerControls(QWidget):
     change_volume_signal = pyqtSignal(int)
     change_muting_signal = pyqtSignal(bool)
 
-    def __init__(self, player):
+    def __init__(self, player: QMediaPlayer):
         super().__init__()
 
         self.player_state = QMediaPlayer.StoppedState
@@ -110,7 +110,7 @@ class PlayerControls(QWidget):
         for tool_button in self.findChildren(QToolButton):
             tool_button.setAutoRaise(True)
 
-    def _position_changed(self, pos):
+    def _position_changed(self, pos: int):
         # TODO: с этим условием при кликах на тело слайдера, ползунок слайдера сдвинется
         # но медиа не будет перемотано
         if not self.player_slider.isSliderDown():
@@ -145,7 +145,7 @@ class PlayerControls(QWidget):
     def state(self):
         return self.player_state
 
-    def set_state(self, state):
+    def set_state(self, state: QMediaPlayer.State):
         if state != self.player_state:
             self.player_state = state
 
@@ -170,13 +170,13 @@ class PlayerControls(QWidget):
     def volume(self):
         return self.volume_slider.value()
 
-    def set_volume(self, volume):
+    def set_volume(self, volume: int):
         self.volume_slider.setValue(volume)
 
     def is_muted(self):
         return self.player_muted
 
-    def set_muted(self, muted):
+    def set_muted(self, muted: bool):
         if muted != self.player_muted:
             self.player_muted = muted
 
@@ -195,21 +195,6 @@ class PlayerControls(QWidget):
 
     def mute_clicked(self, _=None):
         self.change_muting_signal.emit(not self.player_muted)
-
-    def playback_rate(self):
-        return self.rate_box.itemData(self.rate_box.currentIndex())
-
-    def set_playback_rate(self, rate):
-        for i in range(self.rate_box.count()):
-            if qFuzzyCompare(rate, self.rate_box.itemData(i)):
-                self.rate_box.setCurrentIndex(i)
-                return
-
-        self.rate_box.addItem("{}x".format(rate), rate)
-        self.rate_box.setCurrentIndex(self.rate_box.count() - 1)
-
-    def update_rate(self):
-        self.change_rate_signal.emit(self.playback_rate())
 
 
 class LoadAudioListThread(QThread):
@@ -338,7 +323,7 @@ class AudioPlayerPage(QWidget):
         self.thread.started.connect(self._start)
         self.thread.finished.connect(self._finished)
 
-    def _add_audio(self, title, url):
+    def _add_audio(self, title: str, url: str):
         item = QListWidgetItem(title)
         item.setData(Qt.UserRole, url)
         self.audio_list_widget.addItem(item)
