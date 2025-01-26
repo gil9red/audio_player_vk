@@ -1,11 +1,18 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-__author__ = 'ipetrash'
+__author__ = "ipetrash"
 
 
 from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtWidgets import QWidget, QLineEdit, QPushButton, QFormLayout, QVBoxLayout, QMessageBox
+from PyQt5.QtWidgets import (
+    QWidget,
+    QLineEdit,
+    QPushButton,
+    QFormLayout,
+    QVBoxLayout,
+    QMessageBox,
+)
 
 import vk_api
 
@@ -30,12 +37,12 @@ class AuthPage(QWidget):
         self.password.setEchoMode(QLineEdit.Password)
         self.password.returnPressed.connect(self.send_auth)
 
-        self.ok_button = QPushButton('Ok')
+        self.ok_button = QPushButton("Ok")
         self.ok_button.clicked.connect(self.send_auth)
 
         form_layout = QFormLayout()
-        form_layout.addRow('Login:', self.login)
-        form_layout.addRow('Password:', self.password)
+        form_layout.addRow("Login:", self.login)
+        form_layout.addRow("Password:", self.password)
 
         layout = QVBoxLayout()
         layout.addLayout(form_layout)
@@ -45,11 +52,11 @@ class AuthPage(QWidget):
         self.setLayout(layout)
 
     def send_auth(self):
-        log.debug('send_auth')
+        log.debug("send_auth")
 
         login, password = self.login.text(), self.password.text()
         if not login or not password:
-            QMessageBox.warning(self, 'Warning', 'Login or password is empty!')
+            QMessageBox.warning(self, "Warning", "Login or password is empty!")
             return
 
         # Пытаемся авторизоваться
@@ -58,7 +65,7 @@ class AuthPage(QWidget):
             self.vk.authorization()
 
         except Exception as e:
-            QMessageBox.warning(self, 'Warning', 'Fail to authorize:\n' + str(e))
+            QMessageBox.warning(self, "Warning", "Fail to authorize:\n" + str(e))
             return
 
         self.about_successful_auth.emit()

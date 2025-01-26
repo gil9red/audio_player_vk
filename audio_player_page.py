@@ -1,13 +1,23 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-__author__ = 'ipetrash'
+__author__ = "ipetrash"
 
+
+import sys
 
 from PyQt5.QtWidgets import (
-    QWidget, QSlider, QLabel, QToolButton,
-    QStyle, QHBoxLayout, QVBoxLayout, QListWidget, QMessageBox,
-    QListWidgetItem, QProgressBar
+    QWidget,
+    QSlider,
+    QLabel,
+    QToolButton,
+    QStyle,
+    QHBoxLayout,
+    QVBoxLayout,
+    QListWidget,
+    QMessageBox,
+    QListWidgetItem,
+    QProgressBar,
 )
 from PyQt5.QtGui import qFuzzyCompare, QKeyEvent
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent, QMediaPlaylist
@@ -34,10 +44,14 @@ class PlayerControls(QWidget):
         self.player_muted = False
 
         self.player_slider = QSlider(Qt.Horizontal)
-        self.player_slider.sliderMoved.connect(lambda secs: player.setPosition(secs * 1000))
+        self.player_slider.sliderMoved.connect(
+            lambda secs: player.setPosition(secs * 1000)
+        )
 
         self.label_duration = QLabel()
-        player.durationChanged.connect(lambda duration: self.player_slider.setRange(0, duration // 1000))
+        player.durationChanged.connect(
+            lambda duration: self.player_slider.setRange(0, duration // 1000)
+        )
         player.positionChanged.connect(self._position_changed)
 
         player.stateChanged.connect(self.set_state)
@@ -59,7 +73,9 @@ class PlayerControls(QWidget):
         self.next_button.clicked.connect(self.next_signal)
 
         self.previous_button = QToolButton()
-        self.previous_button.setIcon(self.style().standardIcon(QStyle.SP_MediaSkipBackward))
+        self.previous_button.setIcon(
+            self.style().standardIcon(QStyle.SP_MediaSkipBackward)
+        )
         self.previous_button.clicked.connect(self.previous_signal)
 
         self.mute_button = QToolButton()
@@ -110,7 +126,9 @@ class PlayerControls(QWidget):
         current_minutes, current_seconds = divmod(seconds, 60)
         current_hours, current_minutes = divmod(current_minutes, 60)
         if current_hours > 0:
-            current = hms_pattern.format(current_hours, current_minutes, current_seconds)
+            current = hms_pattern.format(
+                current_hours, current_minutes, current_seconds
+            )
         else:
             current = ms_pattern.format(current_minutes, current_seconds)
 
@@ -122,7 +140,7 @@ class PlayerControls(QWidget):
         else:
             total = ms_pattern.format(total_minutes, total_seconds)
 
-        self.label_duration.setText(current + ' / ' + total)
+        self.label_duration.setText(current + " / " + total)
 
     def state(self):
         return self.player_state
@@ -133,15 +151,21 @@ class PlayerControls(QWidget):
 
             if state == QMediaPlayer.StoppedState:
                 self.stop_button.setEnabled(False)
-                self.play_pause_button.setIcon(self.style().standardIcon(QStyle.SP_MediaPlay))
+                self.play_pause_button.setIcon(
+                    self.style().standardIcon(QStyle.SP_MediaPlay)
+                )
 
             elif state == QMediaPlayer.PlayingState:
                 self.stop_button.setEnabled(True)
-                self.play_pause_button.setIcon(self.style().standardIcon(QStyle.SP_MediaPause))
+                self.play_pause_button.setIcon(
+                    self.style().standardIcon(QStyle.SP_MediaPause)
+                )
 
             elif state == QMediaPlayer.PausedState:
                 self.stop_button.setEnabled(True)
-                self.play_pause_button.setIcon(self.style().standardIcon(QStyle.SP_MediaPlay))
+                self.play_pause_button.setIcon(
+                    self.style().standardIcon(QStyle.SP_MediaPlay)
+                )
 
     def volume(self):
         return self.volume_slider.value()
@@ -160,7 +184,10 @@ class PlayerControls(QWidget):
             self.mute_button.setIcon(self.style().standardIcon(icon))
 
     def play_clicked(self):
-        if self.player_state == QMediaPlayer.StoppedState or self.player_state == QMediaPlayer.PausedState:
+        if (
+            self.player_state == QMediaPlayer.StoppedState
+            or self.player_state == QMediaPlayer.PausedState
+        ):
             self.play_signal.emit()
 
         elif self.player_state == QMediaPlayer.PlayingState:
@@ -199,14 +226,14 @@ class LoadAudioListThread(QThread):
         self._is_run = False
 
     def run(self):
-        log.debug('Start thread.')
+        log.debug("Start thread.")
 
         try:
             # Выполняем запрос к vk, чтобы получить список аудизаписей
-            rs = self.vk.method('audio.get')
+            rs = self.vk.method("audio.get")
 
             # TODO: за один запрос vk может и не выдать все аудизаписи
-            audio_list = rs['items']
+            audio_list = rs["items"]
 
             self.about_range_progress.emit(0, len(audio_list))
 
@@ -215,19 +242,23 @@ class LoadAudioListThread(QThread):
                     break
 
                 try:
-                    artist = audio['artist'].strip().title()
-                    title = audio['title'].strip().capitalize()
-                    title = artist + ' - ' + title
-                    url = audio['url']
+                    artist = audio["artist"].strip().title()
+                    title = audio["title"].strip().capitalize()
+                    title = artist + " - " + title
+                    url = audio["url"]
 
                     self.about_progress.emit(i)
                     self.about_add_audio.emit(title, url)
 
                 except Exception as e:
-                    log.exception('Error: {}, audio id={} owner_id={}'.format(e, audio['id'], audio['owner_id']))
+                    log.exception(
+                        "Error: {}, audio id={} owner_id={}".format(
+                            e, audio["id"], audio["owner_id"]
+                        )
+                    )
 
         finally:
-            log.debug('Finish thread.')
+            log.debug("Finish thread.")
 
     def start(self, priority=QThread.InheritPriority):
         self._is_run = True
@@ -252,23 +283,30 @@ class AudioPlayerPage(QWidget):
 
         # TODO: playlist объединить с audio_list_widget (см примеры работы с QMediaPlayer)
         self.playlist = QMediaPlaylist()
-        self.playlist.currentIndexChanged.connect(lambda row: self.audio_list_widget.setCurrentRow(row))
+        self.playlist.currentIndexChanged.connect(
+            lambda row: self.audio_list_widget.setCurrentRow(row)
+        )
 
         # TODO: обрабатывать сигналы плеера: http://doc.qt.io/qt-5/qmediaplayer.html#signals
         self.player = QMediaPlayer()
         self.player.setPlaylist(self.playlist)
         self.player.currentMediaChanged.connect(
-            lambda media: self.about_play_audio.emit(self.audio_list_widget.currentItem().text()))
+            lambda media: self.about_play_audio.emit(
+                self.audio_list_widget.currentItem().text()
+            )
+        )
 
         if not self.player.isAvailable():
             # TODO: перевод
-            text = "The QMediaPlayer object does not have a valid service.\n" \
-                   "Please check the media service plugins are installed."
+            text = (
+                "The QMediaPlayer object does not have a valid service.\n"
+                "Please check the media service plugins are installed."
+            )
 
             log.warning(text)
             QMessageBox.warning(self, "Service not available", text)
 
-            quit()
+            sys.exit()
 
         self.controls = PlayerControls(self.player)
         self.controls.set_state(self.player.state())
@@ -339,7 +377,11 @@ class AudioPlayerPage(QWidget):
     def eventFilter(self, obj, event):
         # Воспроизведение видео при клике на кнопки Enter/Return в плейлисте
         if obj == self.audio_list_widget and event.type() == QKeyEvent.KeyPress:
-            if self.audio_list_widget.hasFocus() and event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter:
+            if (
+                self.audio_list_widget.hasFocus()
+                and event.key() == Qt.Key_Return
+                or event.key() == Qt.Key_Enter
+            ):
                 item = self.audio_list_widget.currentItem()
                 if item is not None:
                     self.play()

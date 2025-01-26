@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-__author__ = 'ipetrash'
+__author__ = "ipetrash"
 
 
 """Simple audio player vk.com"""
@@ -19,18 +19,18 @@ from common import log
 
 
 def log_uncaught_exceptions(ex_cls, ex, tb):
-    text = '{}: {}:\n'.format(ex_cls.__name__, ex)
-    text += ''.join(traceback.format_tb(tb))
+    text = "{}: {}:\n".format(ex_cls.__name__, ex)
+    text += "".join(traceback.format_tb(tb))
 
     log.critical(text)
-    QMessageBox.critical(None, 'Error', text)
-    quit()
+    QMessageBox.critical(None, "Error", text)
+    sys.exit()
 
 
 sys.excepthook = log_uncaught_exceptions
 
 
-TITLE = 'audio_player_vk'
+TITLE = "audio_player_vk"
 
 
 class MainWindow(QMainWindow):
@@ -51,8 +51,8 @@ class MainWindow(QMainWindow):
 
         self.setCentralWidget(self.stacked_widget)
 
-    def update_title(self, audio_title=''):
-        self.setWindowTitle(TITLE + '. ' + audio_title)
+    def update_title(self, audio_title=""):
+        self.setWindowTitle(TITLE + ". " + audio_title)
 
     def go_audio_player_page(self):
         self.stacked_widget.setCurrentWidget(self.audio_player_page)
@@ -61,7 +61,7 @@ class MainWindow(QMainWindow):
         self.audio_player_page.fill(vk)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app = QApplication([])
 
     mw = MainWindow()
